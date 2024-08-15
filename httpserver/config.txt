@@ -1,0 +1,167 @@
+http://localhost:7878/
+http://localhost:7878/health
+http://localhost:7878/api/shipping/orders
+http://localhost:7878/invalid-path
+
+
+    // fn handle_post(
+    //     req: HttpRequest,
+    //     stream: &mut impl Write,
+    //     config: &ConfigServer,
+    //     parsed_msg_body: Vec<u8>,
+    //     addr: &str,
+    // ) {
+    //     if let Some(content_type) = req.headers.get("Content-Type") {
+    //         let content = content_type.trim_start();
+    //         if content.starts_with("multipart/form-data") {
+    //             let boundary = content_type
+    //                 .split("boundary=")
+    //                 .nth(1)
+    //                 .unwrap_or("boundary not specified");
+
+    //             let parts: HashMap<String, (String, Vec<u8>)> =
+    //                 parse_multipart_body(&parsed_msg_body, boundary);
+    //             if parts.is_empty() {
+    //                 // Bad request
+    //                 let response = PageErrorHandler::error_response(config, "400");
+    //                 response.send_response(stream).unwrap();
+    //                 return;
+    //             }
+    //             // println!("{:?}", parts);
+    //             for (key, (field_name, data)) in parts.iter() {
+    //                 if key == "filename" {
+    //                     // verifie s'il n'a pas de cookie
+    //                     if let Some(_) = req.headers.get("Cookie") {
+    //                         if let Err(e) = save_file(&field_name, &data) {
+    //                             eprintln!("Erreur lors de la création du fichier: {}", e);
+    //                             let response = PageErrorHandler::error_response(config, "500");
+    //                             response.send_response(stream).unwrap();
+    //                             return;
+    //                         }
+
+    //                         let response =
+    //                             format!("HTTP/1.1 302 Found\r\nLocation: http://{}/\r\n\r\n", addr);
+    //                         stream.write(response.as_bytes()).unwrap();
+    //                         stream.flush().unwrap();
+    //                         return;
+    //                     } else {
+    //                         let response = format!(
+    //                             "HTTP/1.1 302 Found\r\nLocation: http://{}/login/\r\n\r\n",
+    //                             addr
+    //                         );
+    //                         stream.write(response.as_bytes()).unwrap();
+    //                         stream.flush().unwrap();
+    //                     }
+    //                 } else {
+    //                     // Traiter les champs de texte
+    //                     println!("key=: {}", key);
+    //                     println!("field_name=: {}", field_name);
+    //                     println!("Value: {}", String::from_utf8_lossy(&data).into_owned());
+    //                     let Resource::Path(s) = &req.resource;
+    //                     if s == "/" {
+    //                         if let Some(_) = req.headers.get("Cookie") {
+    //                             // println!("{:#?}", req);
+    //                             let response = format!(
+    //                                 "HTTP/1.1 302 Found\r\nLocation: http://{}/test/cookie.html\r\n\r\n",
+    //                                 addr
+    //                             );
+    //                             stream.write(response.as_bytes()).unwrap();
+    //                             stream.flush().unwrap();
+    //                             // return;
+    //                         } else {
+    //                             set_cookie(req, stream, "secret", config);
+    //                         }
+    //                     }
+    //                     return;
+    //                 }
+    //             }
+    //         } else {
+    //             let boundary = content_type
+    //                 .split("boundary=")
+    //                 .nth(1)
+    //                 .unwrap_or("boundary not specified");
+    //             println!("unsupported content type boundary: {}", boundary);
+    //             let response = PageErrorHandler::error_response(config, "400");
+    //             response.send_response(stream).unwrap();
+    //             return;
+    //         }
+    //     } else {
+    //         let response = PageErrorHandler::error_response(config, "400");
+    //         response.send_response(stream).unwrap();
+    //         return;
+    //     }
+    // }
+    
+    // pub fn parse_multipart_body(body: &[u8], boundary: &str) -> HashMap<String, (String, Vec<u8>)> {
+//     let boundary_str = format!("--{}", boundary);
+//     let boundary_bytes = boundary_str.as_bytes();
+
+//     let mut parts = HashMap::new();
+//     let mut start = 0;
+
+//     while let Some(start_boundary) = find_bytes(&body[start..], boundary_bytes) {
+//         let start_pos = start + start_boundary + boundary_bytes.len();
+//         let next_boundary_pos =
+//             find_bytes(&body[start_pos..], boundary_bytes).map_or(body.len(), |p| start_pos + p);
+//         if start_pos >= body.len() || next_boundary_pos > body.len() {
+//             eprintln!("Calculated boundary indices are out of range");
+//             break;
+//         }
+
+//         let part = &body[start_pos..next_boundary_pos];
+//         if let Some(content_disposition_start) = find_bytes(part, b"Content-Disposition:") {
+//             let content_start = find_bytes(&part[content_disposition_start..], b"\r\n\r\n")
+//                 .map_or(part.len(), |p| content_disposition_start + p + 4);
+//             if content_start >= part.len() {
+//                 eprintln!("Content start index is out of range");
+//                 break;
+//             }
+
+//             let content = &part[content_start..];
+
+//             // Vérifiez si la partie contient un champ filename
+//             if let Some(filename_start) = find_bytes(part, b"filename=") {
+//                 let filename_end = find_bytes(&part[filename_start..], b"\r\n")
+//                     .map_or(part.len(), |p| filename_start + p);
+//                 if filename_end > part.len() {
+//                     eprintln!("Filename end index is out of range");
+//                     break;
+//                 }
+
+//                 let filename = &part[filename_start + 9..filename_end];
+//                 let filename = String::from_utf8_lossy(filename)
+//                     .trim_matches('"')
+//                     .to_string();
+
+//                 // Le contenu du fichier est maintenant entre content_start et next_boundary_pos
+//                 let file_content_end = find_bytes(content, b"\r\n--").unwrap_or(content.len());
+//                 let file_content = content[..file_content_end].to_vec();
+
+//                 parts.insert("filename".to_string(), (filename, file_content));
+//             } else {
+//                 // Traiter comme un champ de texte
+//                 let name_start = find_bytes(part, b"name=").unwrap_or(0) + 5;
+//                 let name_end =
+//                     find_bytes(&part[name_start..], b"\r\n").map_or(part.len(), |p| name_start + p);
+//                 let name = String::from_utf8_lossy(&part[name_start..name_end])
+//                     .trim_matches('"')
+//                     .to_string();
+
+//                 let value_end = find_bytes(content, b"\r\n--").unwrap_or(content.len());
+//                 let value = content[..value_end].to_vec();
+//                 // println!("name: {} value: {}", name, String::from_utf8_lossy(&value).into_owned());
+//                 parts.insert(name.clone(), (name, value));
+//             }
+//         } else {
+//             println!("Content-Disposition non trouvé");
+//         }
+
+//         // Déplacer le pointeur de début après la partie traitée
+//         start = next_boundary_pos;
+//         if start >= body.len() {
+//             break;
+//         }
+//     }
+
+//     parts
+// }

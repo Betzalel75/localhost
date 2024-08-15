@@ -1,0 +1,76 @@
+# config.toml
+[[servers]]
+host_name = " localhost"
+host = "127.0.0.1"
+ports = [7878, 7879, 8080, 8080]
+root = "/home/betzalel/zone01/audits/localhost/httpserver/public"
+error_pages = { "404" = "404.html", "500" = "error.html" }
+cgi_extensions = { "php" = "php-cgi.php", "py" = "python-cgi.py" }
+client_body_limit = 1048576 # 10 MB
+directory_listing = false
+
+
+[[servers.routes]]
+alias = "/singin/"
+pages = ["password.html", "cookie.html"]
+default_page = "/test.html"
+links = ["/styles.css", "/css/style.css", "/css/dir.css"]
+methods = ["GET", "POST", "DELETE"]
+check_cookie = false
+# redirect = {"/login/" = "login.html"} # redirect
+
+
+[[servers.routes]]
+alias = "/login/"
+pages = ["login.html"]
+default_page = "/login.html"
+links = ["/styles.css", "/test.css"]
+methods = ["GET", "POST"]
+check_cookie = false
+# redirect = {"/"= "index.html"}  # Champ ajouté
+
+[[servers.routes]]
+alias = "/"
+pages = ["","index.html"] # Exception: write all pages without /
+default_page = "/index.html"
+links = ["/styles.css", "/css/style.css"]
+methods = ["GET", "POST"]
+check_cookie = false
+
+
+[[servers.routes]]
+alias = "/cookie/"
+pages = [""] # Exception: write all pages without /
+default_page = "/cookie.html"
+links = ["/styles.css", "/css/style.css"]
+methods = ["POST", "GET"]
+check_cookie = true
+# redirect={"/"="index.html"}
+
+[[servers.routes]]
+alias = "/del/"
+pages = ["",""] # Exception: write all pages without /
+default_page = "/index.html"
+links = ["/styles.css"]
+methods = ["DELETE"]
+check_cookie = false
+
+
+# secondary server
+# [[servers]]
+# host_name = " rust"
+# host = "172.17.0.1"
+# ports = [3000, 3001, 8080, 8000]
+# root = "/home/betzalel/zone01/audits/localhost/httpserver/public"
+# error_pages = { "404" = "error.html", "500" = "error.html" }
+# cgi_extensions = { "php" = "php-cgi.php", "py" = "python-cgi.py" }
+# client_body_limit = 1048576 # 10 MB
+# directory_listing = false
+
+# [[servers.routes]]
+# alias = "/"
+# pages = ["","index.html"] # Exception: write all pages without /
+# default_page = "/index.html"
+# links = ["/styles.css"]
+# methods = ["GET"]
+# check_cookie = false

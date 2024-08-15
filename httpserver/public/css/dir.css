@@ -1,0 +1,10 @@
+body{
+    margin: 0;
+    padding: 0;
+    justify-content: center;
+}
+
+h1 {
+  color: red;
+  margin-left: 25px;
+}
