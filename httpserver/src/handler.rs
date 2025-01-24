@@ -22,7 +22,7 @@ pub trait Handler {
 
     fn load_default_file() -> Option<String> {
         let default_path = format!("{}/public/", env!("CARGO_MANIFEST_DIR"));
-        println!("corgo manifest: {}", env!("CARGO_MANIFEST_DIR"));
+        // println!("corgo manifest: {}", env!("CARGO_MANIFEST_DIR"));
         let public_path = env::var("PUBLIC_PATH").unwrap_or(default_path);
         let full_path = format!("{}{}", public_path, "index.html");
         let contents = fs::read_to_string(full_path);
@@ -114,8 +114,8 @@ impl Handler for StaticPageHandler {
         let mut alias = String::new();
         let mut is_alias = false;
 
-        println!("url complet: {}", paths);
-        let file: &str = route.last().expect("faild to take last");
+        // println!("url complet: {}", paths);
+        // let file: &str = route.last().expect("faild to take last");
 
         let dir = format!("{}{}{}", config.root, "/", paths);
         let path_dir = Path::new(&dir);
@@ -131,9 +131,9 @@ impl Handler for StaticPageHandler {
                 }
             }
             if path_dir.exists() {
-                println!("exit");
+                // println!("exit");
                 if path_dir.is_dir() {
-                    println!("is dir {}", path_dir.display());
+                    // println!("is dir {}", path_dir.display());
                     let mut url = paths.clone();
                     if !paths.ends_with('/') {
                         url.push('/');
@@ -145,7 +145,7 @@ impl Handler for StaticPageHandler {
                         None => PageErrorHandler::error_response(config, "404"),
                     };
                 }
-                println!("is file {} paths: {}", file, paths);
+                // println!("is file {} paths: {}", file, paths);
                 // let root = format!("{}{}", config.root, paths.replace(file, ""));
                 return HttpResponse::new(
                     "200",
@@ -172,11 +172,11 @@ impl Handler for StaticPageHandler {
                 if route.check_cookie {
                     if let Some(cookie_header) = req.headers.get("Cookie") {
                         if !verify_cookie(cookie_header) {
-                            println!("Not cookie in file");
+                            // println!("Not cookie in file");
                             return PageErrorHandler::error_response(config, "401");
                         }
                     } else {
-                        println!("Not cookie in headers");
+                        // println!("Not cookie in headers");
                         return PageErrorHandler::error_response(config, "401");
                     }
                 }

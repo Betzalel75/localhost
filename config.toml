@@ -2,8 +2,8 @@
 [[servers]]
 host_name = " localhost"
 host = "127.0.0.1"
-ports = [7878, 7879, 8080, 8080]
-root = "/home/betzalel/zone01/audits/localhost/httpserver/public"
+ports = [7878, 7879, 8080, 9000]
+root = "/home/capybara/Github/localhost/httpserver/public"
 error_pages = { "404" = "404.html", "500" = "error.html" }
 cgi_extensions = { "php" = "php-cgi.php", "py" = "python-cgi.py" }
 client_body_limit = 1048576 # 10 MB
